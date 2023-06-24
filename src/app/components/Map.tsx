@@ -22,7 +22,9 @@ interface Props {
 export default function Map({ onClick }: Props) {
   const warningAreas = useWarningAreas();
   const { width, height, ref } = useParentDimensions();
-  const [currentLocation, setCurrentLocation] = useState<Location | undefined>();
+  const [currentLocation, setCurrentLocation] = useState<
+    Location | undefined
+  >();
 
   const polygons = warningAreas.map((poly, i) => {
     const options = polygonOptions(poly);
@@ -62,7 +64,6 @@ export default function Map({ onClick }: Props) {
           <>
             {...polygons}
             {currentLocation && <Marker position={currentLocation} />}
-
           </>
         </GoogleMap>
       </LoadScript>
