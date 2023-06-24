@@ -4,5 +4,6 @@ export type Location = {
 };
 
 export type WarningArea = {
+  cadNumber: number;
   vertices: Location[];
 };

@@ -7,7 +7,7 @@ import {
 } from "@react-google-maps/api";
 import { Ref, useEffect, useRef, useState } from "react";
 import { Location, WarningArea } from "../../types";
-import { isPointInPolyon } from "../coordinates";
+import { isPointInPolygon } from "../coordinates";
 
 const perth: Location = {
   lat: -31.951640981181253,
@@ -26,7 +26,6 @@ export default function Map({ onClick }: Props) {
     const options = polygonOptions(poly);
     return <PolygonElement path={poly.vertices} options={options} key={i} />;
   });
-  console.log({ warningAreas, polygons });
 
   const onMapClicked = (e: google.maps.MapMouseEvent) => {
     const location = e.latLng?.toJSON();
@@ -34,10 +33,8 @@ export default function Map({ onClick }: Props) {
       return;
     }
 
-    console.log("Clicked", location);
-
     warningAreas
-      .filter(area => isPointInPolyon(location, area.vertices))
+      .filter(area => isPointInPolygon(location, area.vertices))
       .forEach(area => onClick?.(area, location));
   };
 
@@ -93,13 +90,10 @@ function useWarningAreas(): WarningArea[] {
         }
 
         const warningAreas = await response.json();
-        console.log("Setting warning areas", warningAreas);
         setWarningAreas(warningAreas);
       })
       .catch(console.error);
   }, []);
-
-  console.log("Warning areas", warningAreas);
 
   return warningAreas;
 }

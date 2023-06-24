@@ -75,31 +75,15 @@ function pj_phi2(ts: number, e: number): number {
   return Phi;
 }
 
-export function isPointInPolyon(point: Location, polygon: Location[]): boolean {
-  // Initialize the crossing number counter.
-  let numCrossings = 0;
+export function isPointInPolygon(point: Location, polygon: Location[]): boolean {
+  let isInside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      let xi = polygon[i].lat, yi = polygon[i].lng;
+      let xj = polygon[j].lat, yj = polygon[j].lng;
 
-  // Loop over the edges of the polygon.
-  for (let i = 0; i < polygon.length; i++) {
-    const start = polygon[i];
-    const end = polygon[i + (1 % polygon.length) - 1];
-
-    // If the point is to the right of the edge (from the edge's first point to its second point)...
-    if (
-      (start.lat <= point.lat && end.lat > point.lat) || // an upward crossing
-      (start.lat > point.lat && end.lat <= point.lat)
-    ) {
-      // a downward crossing
-
-      // compute the actual edge-ray intersect x-coordinate
-      let vt = (point.lat - start.lat) / (end.lat - start.lat);
-      if (point.lng < start.lng + vt * (end.lng - start.lng)) {
-        // point.lng < intersect
-        ++numCrossings; // a valid crossing of y=point.lat right of point.lng
-      }
-    }
+      let intersect = ((yi > point.lng) != (yj > point.lng))
+          && (point.lat < (xj - xi) * (point.lng - yi) / (yj - yi) + xi);
+      if (intersect) isInside = !isInside;
   }
-
-  // The point is inside the polygon if the crossing number is odd.
-  return numCrossings % 2 !== 0;
+  return isInside;
 }
