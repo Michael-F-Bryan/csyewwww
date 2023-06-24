@@ -29,7 +29,10 @@ export type Point = {
   coordinates: [number, number];
 };
 
+type MercatorCoordinate = [number, number];
+type Polyline = MercatorCoordinate[];
+
 export type Polygon = {
   type: "Polygon";
-  coordinates: Array<Array<[number, number]>>;
+  coordinates: Array<Polyline>;
 };
