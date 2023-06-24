@@ -6,7 +6,9 @@ import {
   Polygon as PolygonElement,
   Marker,
 } from "@react-google-maps/api";
-import { Ref, useEffect, useRef, useState } from "react";
+import { Ref, use, useEffect, useRef, useState } from "react";
+import useSWR from "swr";
+
 import { Location, WarningArea } from "../../types";
 import { isPointInPolygon } from "../coordinates";
 
@@ -15,16 +17,23 @@ const initialCentre: Location = {
   lng: 121.16933982832528,
 };
 
+const fetcher = (url: string) => fetch(url).then(res => res.json());
+
 interface Props {
   onClick?: (polygon: WarningArea, location: Location) => void;
 }
 
 export default function Map({ onClick }: Props) {
-  const warningAreas = useWarningAreas();
+  const { data, error } = useSWR<WarningArea[]>("/api/warnings", fetcher);
+  const warningAreas = data || [];
   const { width, height, ref } = useParentDimensions();
   const [currentLocation, setCurrentLocation] = useState<
     Location | undefined
   >();
+
+  if (error) {
+    console.error(error);
+  }
 
   const polygons = warningAreas.map((poly, i) => {
     const options = polygonOptions(poly);
@@ -37,7 +46,6 @@ export default function Map({ onClick }: Props) {
       return;
     }
 
-    console.log("Set Location", location);
     setCurrentLocation(location);
 
     warningAreas
@@ -87,27 +95,6 @@ function polygonOptions(_: WarningArea) {
   return options;
 }
 
-function useWarningAreas(): WarningArea[] {
-  const [warningAreas, setWarningAreas] = useState<WarningArea[]>([]);
-
-  useEffect(() => {
-    fetch("/api/warnings")
-      .then(async response => {
-        if (!response.ok) {
-          const body = await response.text();
-          console.log("Error", body);
-          throw new Error(response.status + " " + response.statusText);
-        }
-
-        const warningAreas = await response.json();
-        setWarningAreas(warningAreas);
-      })
-      .catch(console.error);
-  }, []);
-
-  return warningAreas;
-}
-
 function useParentDimensions(): {
   width: string;
   height: string;
@@ -128,6 +115,7 @@ function useParentDimensions(): {
       setWidth(`${width}px`);
       const height = event[0].contentBoxSize[0].blockSize;
       setHeight(`${height}px`);
+      console.log("Updating dimensions", { width, height });
     });
     observer.observe(parent);
   }, [ref]);

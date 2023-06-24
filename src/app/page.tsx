@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Map from "./components/Map";
 import styles from "./page.module.css";
 import { Location, WarningArea } from "@/types";
-import type { UserInfo, Input, IncidentInfo } from "./api/advice/route";
+import { Advice } from "./api/advice/route";
+import { Input, UserInfo } from "./prompts";
 
 const initialUserInfo: UserInfo = {
   elderly: false,
@@ -19,14 +20,36 @@ const initialUserInfo: UserInfo = {
 };
 
 export default async function Home() {
-  const [response, setResponse] = useState();
+  const [advice, setAdvice] = useState<Advice>();
   const [userInfo, setUserInfo] = useState<UserInfo>(initialUserInfo);
+  const [sendingPrompt, setSendingPrompt] = useState(false);
+  const [selectedWarningArea, setSelectedWarningArea] = useState<WarningArea>();
+
+  const onClick = (warningArea: WarningArea, location: Location) => {
+    console.log("On Click", { sendingPrompt });
+    if (!sendingPrompt) {
+      setSelectedWarningArea(warningArea);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedWarningArea) {
+      setSendingPrompt(true);
+      postRequest(selectedWarningArea, userInfo)
+        .then(advice => {
+          console.log(advice);
+          setAdvice(advice);
+          setSendingPrompt(false);
+        })
+    }
+
+  }, [selectedWarningArea]);
+
+  console.log(advice);
 
   return (
     <main className={styles.main}>
-      <Map
-        onClick={(warningArea, location) => postRequest(warningArea, userInfo)}
-      />
+      <Map onClick={onClick} />
     </main>
   );
 }
@@ -34,7 +57,7 @@ export default async function Home() {
 async function postRequest(
   warningArea: WarningArea,
   userInfo: UserInfo
-): Promise<unknown> {
+): Promise<Advice> {
   console.log("Inside warning area", { location, warningArea });
   const input: Input = {
     incident: {
@@ -45,7 +68,14 @@ async function postRequest(
     user: userInfo,
   };
 
-  const response = await fetch("/api/advice", { method: "POST", body: JSON.stringify(input) });
+  queueMicrotask(() => {
+    console.log(fetch);
+  });
+
+  const response = await fetch("/api/advice", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
   console.log(response);
   if (!response.ok) {
     throw new Error(response.status + " " + response.statusText);
