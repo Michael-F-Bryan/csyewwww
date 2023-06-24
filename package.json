@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "fmt": "prettier"
+    "fmt": "prettier -w ."
   },
   "dependencies": {
     "@react-google-maps/api": "^2.18.1",
