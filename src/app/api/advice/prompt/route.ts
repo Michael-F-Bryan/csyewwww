@@ -1,7 +1,9 @@
 import { Liquid } from "liquidjs";
 import path from "path";
 
-const promptDir = path.join(__dirname, "../../../../../../prompts");
+
+const scriptDir = path.dirname(import.meta.url.replace("file://", ""));
+const promptDir = path.join(scriptDir,  "../../../../../prompts");
 const templates = new Liquid({
     root: promptDir,
     extname: ".liquid",
@@ -23,12 +25,23 @@ templates.registerFilter("isSet", {
 
 export async function POST(req: Request): Promise<Response> {
   const input: Partial<Input> = await req.json();
-  const prompt = await generatePrompt(input);
-  return new Response(prompt);
+  const messages = await generatePromptMessages(input);
+  return new Response(JSON.stringify(messages));
 }
 
-export function generatePrompt(input: Partial<Input>): Promise<string> {
-  return templates.renderFile("user", input);
+type CompletionMessage = {
+  role: "user" | "system" | "assistant",
+  content: string,
+}
+
+export async function generatePromptMessages(input: Partial<Input>): Promise<CompletionMessage[]> {
+  console.log(__dirname, import.meta.url);
+
+  const msg = {
+    role: "user" as const,
+    content: await templates.renderFile("user", input) as string,
+  } ;
+  return [msg];
 }
 
 export type IncidentInfo = {

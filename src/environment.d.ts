@@ -8,7 +8,7 @@ declare global {
       /**
        * An API key for OpenAI.
        */
-      OPENAI_TOKEN: string;
+      OPENAI_API_KEY: string;
     }
   }
 }
