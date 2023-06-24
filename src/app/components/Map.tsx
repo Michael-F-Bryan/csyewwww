@@ -4,14 +4,15 @@ import {
   GoogleMap,
   LoadScript,
   Polygon as PolygonElement,
+  Marker,
 } from "@react-google-maps/api";
 import { Ref, useEffect, useRef, useState } from "react";
 import { Location, WarningArea } from "../../types";
 import { isPointInPolygon } from "../coordinates";
 
-const perth: Location = {
-  lat: -31.951640981181253,
-  lng: 115.85195701582528,
+const initialCentre: Location = {
+  lat: -25.660779756858133,
+  lng: 121.16933982832528,
 };
 
 interface Props {
@@ -21,6 +22,7 @@ interface Props {
 export default function Map({ onClick }: Props) {
   const warningAreas = useWarningAreas();
   const { width, height, ref } = useParentDimensions();
+  const [currentLocation, setCurrentLocation] = useState<Location | undefined>();
 
   const polygons = warningAreas.map((poly, i) => {
     const options = polygonOptions(poly);
@@ -32,6 +34,9 @@ export default function Map({ onClick }: Props) {
     if (!location) {
       return;
     }
+
+    console.log("Set Location", location);
+    setCurrentLocation(location);
 
     warningAreas
       .filter(area => isPointInPolygon(location, area.vertices))
@@ -50,11 +55,15 @@ export default function Map({ onClick }: Props) {
       >
         <GoogleMap
           mapContainerStyle={{ width, height }}
-          center={perth}
-          zoom={10}
+          center={initialCentre}
+          zoom={5}
           onClick={onMapClicked}
         >
-          <>{...polygons}</>
+          <>
+            {...polygons}
+            {currentLocation && <Marker position={currentLocation} />}
+
+          </>
         </GoogleMap>
       </LoadScript>
     </div>
