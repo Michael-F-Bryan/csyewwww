@@ -39,8 +39,10 @@ export default function Map({ warningAreas, onClick }: Props) {
     observer.observe(parent);
   }, [containerRef]);
 
-  const polygons = warningAreas.map((poly, i) => polygonElement(i, poly));
-  console.log(warningAreas);
+  const polygons = warningAreas.map((poly, i) => {
+    const options = polygonOptions(poly);
+    <PolygonElement path={poly.vertices} options={options} key={i} />;
+  });
 
   const onMapClicked = (e: google.maps.MapMouseEvent) => {
     const location = e.latLng?.toJSON();
@@ -79,7 +81,7 @@ export default function Map({ warningAreas, onClick }: Props) {
   );
 }
 
-function polygonElement(index: number, poly: WarningArea): PolygonElement {
+function polygonOptions(_: WarningArea) {
   const options = {
     fillColor: "lightblue",
     fillOpacity: 0.3,
@@ -92,5 +94,5 @@ function polygonElement(index: number, poly: WarningArea): PolygonElement {
     geodesic: false,
     zIndex: 1,
   };
-  return <PolygonElement path={poly.vertices} options={options} key={index} />;
+  return options;
 }
