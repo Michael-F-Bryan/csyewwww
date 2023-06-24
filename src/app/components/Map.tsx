@@ -4,14 +4,15 @@ import {
   GoogleMap,
   LoadScript,
   Polygon as PolygonElement,
+  Marker,
 } from "@react-google-maps/api";
 import { Ref, useEffect, useRef, useState } from "react";
 import { Location, WarningArea } from "../../types";
-import { isPointInPolyon } from "../coordinates";
+import { isPointInPolygon } from "../coordinates";
 
-const perth: Location = {
-  lat: -31.951640981181253,
-  lng: 115.85195701582528,
+const initialCentre: Location = {
+  lat: -25.660779756858133,
+  lng: 121.16933982832528,
 };
 
 interface Props {
@@ -21,12 +22,12 @@ interface Props {
 export default function Map({ onClick }: Props) {
   const warningAreas = useWarningAreas();
   const { width, height, ref } = useParentDimensions();
+  const [currentLocation, setCurrentLocation] = useState<Location | undefined>();
 
   const polygons = warningAreas.map((poly, i) => {
     const options = polygonOptions(poly);
     return <PolygonElement path={poly.vertices} options={options} key={i} />;
   });
-  console.log({ warningAreas, polygons });
 
   const onMapClicked = (e: google.maps.MapMouseEvent) => {
     const location = e.latLng?.toJSON();
@@ -34,10 +35,11 @@ export default function Map({ onClick }: Props) {
       return;
     }
 
-    console.log("Clicked", location);
+    console.log("Set Location", location);
+    setCurrentLocation(location);
 
     warningAreas
-      .filter(area => isPointInPolyon(location, area.vertices))
+      .filter(area => isPointInPolygon(location, area.vertices))
       .forEach(area => onClick?.(area, location));
   };
 
@@ -53,11 +55,15 @@ export default function Map({ onClick }: Props) {
       >
         <GoogleMap
           mapContainerStyle={{ width, height }}
-          center={perth}
-          zoom={10}
+          center={initialCentre}
+          zoom={5}
           onClick={onMapClicked}
         >
-          <>{...polygons}</>
+          <>
+            {...polygons}
+            {currentLocation && <Marker position={currentLocation} />}
+
+          </>
         </GoogleMap>
       </LoadScript>
     </div>
@@ -93,13 +99,10 @@ function useWarningAreas(): WarningArea[] {
         }
 
         const warningAreas = await response.json();
-        console.log("Setting warning areas", warningAreas);
         setWarningAreas(warningAreas);
       })
       .catch(console.error);
   }, []);
-
-  console.log("Warning areas", warningAreas);
 
   return warningAreas;
 }
