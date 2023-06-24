@@ -1,4 +1,3 @@
-
 import Map from "./components/Map";
 import styles from "./page.module.css";
 

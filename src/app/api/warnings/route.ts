@@ -5,9 +5,7 @@ import { WarningArea } from "@/types";
 import { MessageArea } from "@/app/messageArea";
 import { mercatorToLatLong } from "@/app/coordinates";
 
-export async function GET(
-  req: Request,
-): Promise<Response> {
+export async function GET(req: Request): Promise<Response> {
   const messageAreas = await loadFixtures();
   const body = JSON.stringify(messageAreas.flatMap(toWarningArea));
   return new Response(body);
@@ -18,8 +16,8 @@ async function loadFixtures(): Promise<MessageArea[]> {
   const messageAreasDir = path.join(fixturesDir, "message-areas");
 
   const messageAreaPromises = (await fs.readdir(messageAreasDir))
-    .map((entry) => path.join(messageAreasDir, entry))
-    .map(async (path) => {
+    .map(entry => path.join(messageAreasDir, entry))
+    .map(async path => {
       const json = await fs.readFile(path, { encoding: "utf-8" });
       return JSON.parse(json);
     });

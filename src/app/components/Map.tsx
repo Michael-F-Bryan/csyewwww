@@ -36,10 +36,9 @@ export default function Map({ onClick }: Props) {
 
     console.log("Clicked", location);
 
-    const selectedWarningAreas = warningAreas.filter((area) =>
-      isPointInPolyon(location, area.vertices)
-    );
-    console.log("Selected", selectedWarningAreas);
+    warningAreas
+      .filter(area => isPointInPolyon(location, area.vertices))
+      .forEach(area => onClick?.(area, location));
   };
 
   return (
@@ -86,7 +85,7 @@ function useWarningAreas(): WarningArea[] {
 
   useEffect(() => {
     fetch("/api/warnings")
-      .then(async (response) => {
+      .then(async response => {
         if (!response.ok) {
           const body = await response.text();
           console.log("Error", body);
@@ -105,7 +104,11 @@ function useWarningAreas(): WarningArea[] {
   return warningAreas;
 }
 
-function useParentDimensions(): { width: string, height: string, ref: Ref<HTMLDivElement> } {
+function useParentDimensions(): {
+  width: string;
+  height: string;
+  ref: Ref<HTMLDivElement>;
+} {
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState("400px");
   const [height, setHeight] = useState("400px");
@@ -116,7 +119,7 @@ function useParentDimensions(): { width: string, height: string, ref: Ref<HTMLDi
       return;
     }
 
-    const observer = new ResizeObserver((event) => {
+    const observer = new ResizeObserver(event => {
       const width = event[0].contentBoxSize[0].inlineSize;
       setWidth(`${width}px`);
       const height = event[0].contentBoxSize[0].blockSize;
