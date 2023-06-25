@@ -107,6 +107,7 @@ async function postNotification(
   const n = new Notification(advice.Title, {
     body: advice.ShortDescription,
     icon: iconLink(advice.IncidentType),
+    // requireInteraction: true,
   });
   n.addEventListener("click", () => {
     console.log("Clicked!");
@@ -119,9 +120,12 @@ async function postNotification(
 }
 
 function iconLink(text: string): string | undefined {
+  console.log(text);
   switch (text.toLocaleLowerCase()) {
     case "fire":
       return "https://em-content.zobj.net/thumbs/240/google/350/fire_1f525.png";
+    case "cyclone":
+      return "https://em-content.zobj.net/source/skype/289/cyclone_1f300.png";
     default:
       return undefined;
   }

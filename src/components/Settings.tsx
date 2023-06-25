@@ -24,7 +24,7 @@ export default function Settings({ info, infoChanged }: Props) {
 
     const checkboxes = fields.map(([key, label]) => {
         return (
-            <div>
+            <div key={key}>
                 <input
                     type="checkbox"
                     id={key}

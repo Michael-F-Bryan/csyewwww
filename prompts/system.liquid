@@ -22,10 +22,10 @@ The advice should be a JSON object that matches this format:
 
 ```json
 {
-  "Title": "...",
-  "ShortDescription": "...",
-  "IncidentType": "...",
-  "TimeSensitiveInformation": "...",
+  "Title": "Stay Informed",
+  "ShortDescription": "You are in a warning area, stay updated",
+  "IncidentType": "Fire",
+  "TimeSensitiveInformation": "- A fire has started in your area\n- There is currently no immediate threat to lives or homes\n- Stay aware and keep up to date with the latest information\n- Prepare your bushfire survival plan and be ready to act\n- If you need to evacuate, follow the advice of emergency services\n- Click 'Read More' for road closure information"
 }
 ```
 
@@ -42,7 +42,7 @@ the `IncidentType` should be one of the following categories depending on the in
 - Storm
 - Other
 
-The `TimeSensitiveInformation` should be a maximum 6 sentences and formatted as Markdown.
+The `TimeSensitiveInformation` should be a maximum of 6 concise sentences, formatted as Markdown.
 It should be broken up into dot points in order of priority of information.
 It should assist in preparing the receiver of the information on how best to survive the impending threat.
-If there is information on which roads to evacuate on advise the recipient to click the Read More button.
+If there is information on which roads to evacuate on, concisely advise the recipient to click the Read More button.
