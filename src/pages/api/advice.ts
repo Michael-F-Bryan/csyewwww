@@ -2,7 +2,7 @@ import { query } from "../../gpt";
 import { Input } from "../../prompts";
 
 export default async function handle(req: any, res: any): Promise<void> {
-  const input: Partial<Input> = JSON.parse(req.body);
+  const input: Input = JSON.parse(req.body);
   let advice;
 
   try {
