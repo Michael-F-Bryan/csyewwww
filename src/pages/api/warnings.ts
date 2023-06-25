@@ -5,6 +5,7 @@ import { WarningArea } from "@/types";
 import { MessageArea } from "../../messageArea";
 import { mercatorToLatLong } from "../../coordinates";
 import { NextApiRequest } from "next";
+import { findDir } from "@/prompts";
 
 export default async function handle(
   req: NextApiRequest,
@@ -20,9 +21,10 @@ type Fixture = {
   msg: MessageArea;
 };
 
+const fixturesDir = findDir(__dirname, "fixtures");
+
 async function loadFixtures(): Promise<Fixture[]> {
-  const fixturesDir = path.join(__dirname, "../../../../fixtures");
-  const messageAreasDir = path.join(fixturesDir, "message-areas");
+  const messageAreasDir = path.join(await fixturesDir, "message-areas");
 
   const promises = (await fs.readdir(messageAreasDir))
     .map(entry => path.join(messageAreasDir, entry))
