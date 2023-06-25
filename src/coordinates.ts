@@ -1,7 +1,7 @@
 // Coordinate transformations for Elliptical mercator projections.
 // https://wiki.openstreetmap.org/wiki/Mercator#JavaScript_(or_ActionScript)_implementation
 
-import { Location } from "../types";
+import { Location } from "./types";
 
 export type Mercator = {
   x: number;

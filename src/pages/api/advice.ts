@@ -1,14 +1,14 @@
-import { query } from "../gpt";
-import { Input } from "../prompts";
+import { query } from "../../gpt";
+import { Input } from "../../prompts";
 
 export default async function handle(req: any, res: any): Promise<void> {
   const input: Partial<Input> = JSON.parse(req.body);
   let advice;
 
   try {
-  console.log("Querying", input);
+    console.log("Querying", input);
     advice = await query(input);
-    console.log(advice);
+    console.log("Advice", advice);
   } catch (e) {
     console.error("Bad response from GPT-3.5", e);
     // Fall back to the hard-coded response

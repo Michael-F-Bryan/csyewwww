@@ -2,11 +2,11 @@ import Head from "next/head";
 
 import { useState } from "react";
 import useSWR from "swr";
-import { Input, UserInfo } from "./prompts";
-import { Advice } from "./gpt";
+import { Input, UserInfo } from "../prompts";
+import { Advice } from "../gpt";
 import { WarningArea } from "../types";
-import Map from "./components/Map";
-import Modal from "./components/Modal";
+import Map from "../components/Map";
+import Modal from "../components/Modal";
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -47,7 +47,10 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="main" style={{ background: querying ? "lightslategrey" : undefined }}>
+      <main
+        className="main"
+        style={{ background: querying ? "lightslategrey" : undefined }}
+      >
         <Map onClick={onClick} warningAreas={warningAreas} />
         {advice && (
           <Modal advice={advice} onClose={() => setAdvice(undefined)} />

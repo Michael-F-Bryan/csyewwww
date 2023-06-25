@@ -2,8 +2,8 @@ import fs from "fs/promises";
 import path from "path";
 
 import { WarningArea } from "@/types";
-import { MessageArea } from "../messageArea";
-import { mercatorToLatLong } from "../coordinates";
+import { MessageArea } from "../../messageArea";
+import { mercatorToLatLong } from "../../coordinates";
 import { NextApiRequest } from "next";
 
 export default async function handle(

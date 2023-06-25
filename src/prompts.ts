@@ -2,7 +2,7 @@ import { Liquid } from "liquidjs";
 import path from "path";
 
 const scriptDir = path.dirname(import.meta.url.replace("file://", ""));
-const promptDir = path.join(scriptDir, "../../prompts");
+const promptDir = path.join(scriptDir, "../prompts");
 const templates = new Liquid({
   root: promptDir,
   extname: ".liquid",
@@ -25,13 +25,16 @@ templates.registerFilter("isSet", {
 export async function generatePromptMessages(
   input: Partial<Input>
 ): Promise<CompletionMessage[]> {
-  console.log(__dirname, import.meta.url);
-
-  const msg = {
-    role: "user" as const,
-    content: (await templates.renderFile("user", input)) as string,
-  };
-  return [msg];
+  return [
+    {
+      role: "system" as const,
+      content: (await templates.renderFile("system", input)) as string,
+    },
+    {
+      role: "user" as const,
+      content: (await templates.renderFile("user", input)) as string,
+    },
+  ];
 }
 
 export type CompletionMessage = {

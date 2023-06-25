@@ -26,9 +26,11 @@ export async function query(input: Partial<Input>): Promise<Advice> {
     throw new Error("No choices found");
   }
 
-  console.log(choice);
+  console.log("Choice", choice);
 
-  return JSON.parse(choice.replace("```json", "").replace("```", ""));
+  return JSON.parse(
+    choice.replace("```json", "").replace("```", "").replace("•", "-")
+  );
 }
 
 export type Advice = {

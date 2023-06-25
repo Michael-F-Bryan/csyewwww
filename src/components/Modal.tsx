@@ -7,6 +7,8 @@ interface Props {
 }
 
 export default function Modal({ advice, onClose }: Props) {
+  console.log("MODAL", advice);
+
   return (
     <div className="modal display-block">
       <section className="modal-main">
