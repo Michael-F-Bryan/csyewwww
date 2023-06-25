@@ -1,7 +1,7 @@
 import { Configuration, OpenAIApi } from "openai";
 import { Input, generatePromptMessages } from "./prompts";
 
-const temperature = 0.7;
+const temperature = 0.2;
 const maxTokens = 1144;
 const model = "gpt-3.5-turbo";
 
@@ -19,13 +19,14 @@ export async function query(input: Partial<Input>): Promise<Advice> {
     max_tokens: maxTokens,
     temperature,
   });
-  console.log(completion.data);
 
   const choice = completion?.data?.choices?.[0]?.message?.content;
 
   if (!choice) {
     throw new Error("No choices found");
   }
+
+  console.log(choice);
 
   return JSON.parse(choice.replace("```json", "").replace("```", ""));
 }

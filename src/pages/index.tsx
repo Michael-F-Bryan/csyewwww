@@ -1,12 +1,12 @@
-import Head from 'next/head'
-import { Inter } from 'next/font/google'
+import Head from "next/head";
+import { Inter } from "next/font/google";
 
-import styles from './page.module.css'
-import { useEffect, useState } from 'react'
-import useSWR from "swr"
-import { Input, UserInfo } from './prompts'
-import { Advice } from './gpt'
-import { WarningArea } from '../types'
+import styles from "./page.module.css";
+import { useEffect, useState } from "react";
+import useSWR from "swr";
+import { Input, UserInfo } from "./prompts";
+import { Advice } from "./gpt";
+import { WarningArea } from "../types";
 import Map from "./components/Map";
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
@@ -23,9 +23,7 @@ const initialUserInfo: UserInfo = {
   accessIssues: false,
 };
 
-
 export default function Home() {
-  const [advice, setAdvice] = useState<Advice>();
   const [userInfo, setUserInfo] = useState<UserInfo>(initialUserInfo);
   const [sendingPrompt, setSendingPrompt] = useState(false);
   const { data } = useSWR<WarningArea[]>("/api/warnings", fetcher);
@@ -39,12 +37,10 @@ export default function Home() {
     postRequest(warningArea, userInfo)
       .then(advice => {
         console.log(advice);
-        setAdvice(advice);
+        postNotification(advice);
       })
       .finally(() => setSendingPrompt(false));
   };
-
-  console.log(advice);
 
   return (
     <>
@@ -80,12 +76,34 @@ async function postRequest(
     method: "POST",
     body: JSON.stringify(input),
   });
-  console.log(response.status);
   if (!response.ok) {
     throw new Error(response.status + " " + response.statusText);
   }
-  const advice = await response.json();
-  console.log("Result", advice);
+  return await response.json();
+}
 
-  return advice;
+async function postNotification(advice: Advice): Promise<void> {
+  if (Notification.permission != "granted") {
+    const result = await Notification.requestPermission();
+    if (result == "denied") {
+      return;
+    }
+  }
+
+  const n = new Notification(advice.Title, {
+    body: advice.ShortDescription,
+    icon: iconLink(advice.IncidentType),
+  });
+  n.addEventListener("click", () => console.log("Clicked!"));
+  n.addEventListener("error", e => console.log("Error", e));
+  n.addEventListener("show", e => console.log("Show", e));
+}
+
+function iconLink(text: string): string | undefined {
+  switch (text.toLocaleLowerCase()) {
+    case "fire":
+      return "https://em-content.zobj.net/thumbs/240/google/350/fire_1f525.png";
+    default:
+      return undefined;
+  }
 }
