@@ -6,7 +6,15 @@ export default async function handle(req: any, res: any): Promise<void> {
   console.log("Advice!");
   const input: Partial<Input> = JSON.parse(req.body);
   console.log("input", input);
-  const advice = await query(input);
+
+  // HACK: Use a hard-coded response for now
+  // const advice = await query(input);
+  const advice = {
+    "Title": "Stay Informed",
+    "ShortDescription": "You are in a warning area, stay updated",
+    "IncidentType": "Fire",
+    "TimeSensitiveInformation": "- A fire has started in your area\n- There is currently no immediate threat to lives or homes\n- Stay aware and keep up to date with the latest information\n- Prepare your bushfire survival plan and be ready to act\n- If you need to evacuate, follow the advice of emergency services\n- Click 'Read More' for road closure information",
+  };
 
   console.log(advice);
 
