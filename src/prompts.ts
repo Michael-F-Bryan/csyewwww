@@ -5,17 +5,21 @@ import fs from "fs/promises";
 const templates = loadTemplates();
 
 export async function generatePromptMessages(
-  input: Partial<Input>
+  input: Input
 ): Promise<CompletionMessage[]> {
   const t = await templates;
+  const messageDetail = await findMessageDetail(input.incident.cadNumber);
+
+  const ctx = { ...input, messageDetail };
+
   return [
     {
       role: "system" as const,
-      content: (await t.renderFile("system", input)) as string,
+      content: (await t.renderFile("system", ctx)) as string,
     },
     {
       role: "user" as const,
-      content: (await t.renderFile("user", input)) as string,
+      content: (await t.renderFile("user", ctx)) as string,
     },
   ];
 }
@@ -28,7 +32,7 @@ export type CompletionMessage = {
 export type IncidentInfo = {
   /** The CAD number for this incident. */
   cadNumber: number;
-  polygonLevel: string;
+  polygonLevel?: string;
   /**
    * The type of warning (advice, watch and act, etc.).
    */
@@ -75,7 +79,7 @@ export type UserInfo = {
 };
 
 export type Input = {
-  incident: Partial<IncidentInfo>;
+  incident: IncidentInfo;
   user: Partial<UserInfo>;
 };
 
@@ -103,7 +107,10 @@ async function loadTemplates() {
   return templates;
 }
 
-export async function findDir(initialDir: string, needle: string): Promise<string> {
+export async function findDir(
+  initialDir: string,
+  needle: string
+): Promise<string> {
   let dir = path.resolve(initialDir);
 
   while (dir && dir != "/") {
@@ -118,4 +125,15 @@ export async function findDir(initialDir: string, needle: string): Promise<strin
   }
 
   throw new Error(`Couldn't find {needle} in {initialDir}`);
+}
+
+async function findMessageDetail(cadNumber: number): Promise<string> {
+  const fixtures = await findDir(__dirname, "fixtures");
+  const filename = path.join(fixtures, "alerts", `${cadNumber}.html`);
+
+  try {
+    return await fs.readFile(filename, { encoding: "utf-8" });
+  } catch {
+    return "";
+  }
 }

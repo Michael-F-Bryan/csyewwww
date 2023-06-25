@@ -10,7 +10,7 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-export async function query(input: Partial<Input>): Promise<Advice> {
+export async function query(input: Input): Promise<Advice> {
   const messages = await generatePromptMessages(input);
 
   const completion = await openai.createChatCompletion({
@@ -29,7 +29,11 @@ export async function query(input: Partial<Input>): Promise<Advice> {
   console.log("Choice", choice);
 
   return JSON.parse(
-    choice.replace("```json", "").replace("```", "").replace("•", "-")
+    choice
+      .replace("```json", "")
+      .replace("```", "")
+      .replace("•", "-")
+      .replace("•", "-")
   );
 }
 

@@ -2,7 +2,7 @@ import { Advice } from "../gpt";
 import ReactMarkdown from "react-markdown";
 
 interface Props {
-  advice: Advice;
+  advice: Advice & {cadNumber: number};
   onClose: () => void;
 }
 
@@ -19,9 +19,8 @@ export default function Modal({ advice, onClose }: Props) {
 
         <ReactMarkdown>{advice.TimeSensitiveInformation}</ReactMarkdown>
 
-        <button type="button" onClick={() => onClose()}>
-          Close
-        </button>
+        <button type="button" onClick={() => onClose()}>Close</button>
+        <button type="button" onClick={() => onClose()}>Close</button>
       </section>
     </div>
   );

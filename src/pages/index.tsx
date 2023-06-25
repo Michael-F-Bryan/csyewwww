@@ -26,7 +26,7 @@ export default function Home() {
   const [userInfo, setUserInfo] = useState<UserInfo>(initialUserInfo);
   const { data } = useSWR<WarningArea[]>("/api/warnings", fetcher);
   const warningAreas = data || [];
-  const [advice, setAdvice] = useState<Advice>();
+  const [advice, setAdvice] = useState<Advice & { cadNumber: number }>();
   const [querying, setQuerying] = useState(false);
 
   const onClick = (warningArea: WarningArea) => {
@@ -35,7 +35,7 @@ export default function Home() {
     }
     setQuerying(true);
     postRequest(warningArea, userInfo)
-      .then(advice => postNotification(advice, () => setAdvice(advice)))
+      .then(advice => postNotification(advice, () => setAdvice({ ...advice, cadNumber: warningArea.cadNumber })))
       .finally(() => setQuerying(false));
   };
 

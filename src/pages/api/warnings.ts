@@ -12,6 +12,7 @@ export default async function handle(
   res: any
 ): Promise<void> {
   const messageAreas = await loadFixtures();
+  console.log(messageAreas.map(m => m.cadNumber));
   const warningAreas = messageAreas.flatMap(msg => toWarningArea(msg));
   res.status(200).json(warningAreas);
 }
