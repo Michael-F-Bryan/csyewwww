@@ -1,8 +1,6 @@
 import Head from "next/head";
-import { Inter } from "next/font/google";
 
-import styles from "./page.module.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useSWR from "swr";
 import { Input, UserInfo } from "./prompts";
 import { Advice } from "./gpt";
@@ -49,7 +47,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main} style={{ background: querying ? "lightslategrey" : undefined }}>
+      <main className="main" style={{ background: querying ? "lightslategrey" : undefined }}>
         <Map onClick={onClick} warningAreas={warningAreas} />
         {advice && (
           <Modal advice={advice} onClose={() => setAdvice(undefined)} />
