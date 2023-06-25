@@ -29,11 +29,16 @@ export default function Home() {
   const { data } = useSWR<WarningArea[]>("/api/warnings", fetcher);
   const warningAreas = data || [];
   const [advice, setAdvice] = useState<Advice>();
+  const [querying, setQuerying] = useState(false);
 
   const onClick = (warningArea: WarningArea) => {
-    postRequest(warningArea, userInfo).then(advice =>
-      postNotification(advice, () => setAdvice(advice))
-    );
+    if (querying) {
+      return;
+    }
+    setQuerying(true);
+    postRequest(warningArea, userInfo)
+      .then(advice => postNotification(advice, () => setAdvice(advice)))
+      .finally(() => setQuerying(false));
   };
 
   return (
@@ -44,7 +49,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
+      <main className={styles.main} style={{ background: querying ? "lightslategrey" : undefined }}>
         <Map onClick={onClick} warningAreas={warningAreas} />
         {advice && (
           <Modal advice={advice} onClose={() => setAdvice(undefined)} />
