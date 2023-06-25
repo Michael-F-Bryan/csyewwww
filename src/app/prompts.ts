@@ -14,7 +14,7 @@ templates.registerFilter("isSet", {
       case "undefined":
         return false;
       case "object":
-        return Object.getOwnPropertyNames(value).length > 0;
+        return Object.values(value).some(v => !!v);
       default:
         return !!value;
     }

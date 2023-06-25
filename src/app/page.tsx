@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Map from "./components/Map";
 import styles from "./page.module.css";
-import { Location, WarningArea } from "@/types";
-import { Advice } from "./api/advice/route";
+import { WarningArea } from "@/types";
 import { Input, UserInfo } from "./prompts";
+import type { Advice } from "./gpt";
 
 const initialUserInfo: UserInfo = {
   elderly: false,
@@ -23,27 +23,18 @@ export default async function Home() {
   const [advice, setAdvice] = useState<Advice>();
   const [userInfo, setUserInfo] = useState<UserInfo>(initialUserInfo);
   const [sendingPrompt, setSendingPrompt] = useState(false);
-  const [selectedWarningArea, setSelectedWarningArea] = useState<WarningArea>();
 
-  const onClick = (warningArea: WarningArea, location: Location) => {
+  const onClick = (warningArea: WarningArea) => {
     console.log("On Click", { sendingPrompt });
-    if (!sendingPrompt) {
-      setSelectedWarningArea(warningArea);
-    }
+
+    setSendingPrompt(true);
+
+    postRequest(warningArea, userInfo).then(advice => {
+      console.log(advice);
+      setAdvice(advice);
+      setSendingPrompt(false);
+    });
   };
-
-  useEffect(() => {
-    if (selectedWarningArea) {
-      setSendingPrompt(true);
-      postRequest(selectedWarningArea, userInfo)
-        .then(advice => {
-          console.log(advice);
-          setAdvice(advice);
-          setSendingPrompt(false);
-        })
-    }
-
-  }, [selectedWarningArea]);
 
   console.log(advice);
 
@@ -59,6 +50,7 @@ async function postRequest(
   userInfo: UserInfo
 ): Promise<Advice> {
   console.log("Inside warning area", { location, warningArea });
+
   const input: Input = {
     incident: {
       cadNumber: warningArea.cadNumber,
@@ -68,21 +60,24 @@ async function postRequest(
     user: userInfo,
   };
 
-  queueMicrotask(() => {
-    console.log(fetch);
-  });
+  if (false) {
+    const response = await fetch("/api/advice", {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+    if (!response.ok) {
+      throw new Error(response.status + " " + response.statusText);
+    }
+    const advice = await response.json();
+    console.log("Result", advice);
 
-  const response = await fetch("/api/advice", {
-    method: "POST",
-    body: JSON.stringify(input),
-  });
-  console.log(response);
-  if (!response.ok) {
-    throw new Error(response.status + " " + response.statusText);
+    return advice;
   }
 
-  const result = await response.json();
-  console.log("Result", result);
-
-  return result;
+  return {
+    Title: "Fire",
+    IncidentType: "Fire",
+    ShortDescription: "",
+    TimeSensitiveInformation: "",
+  };
 }

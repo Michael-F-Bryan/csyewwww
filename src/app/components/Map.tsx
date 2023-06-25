@@ -54,12 +54,7 @@ export default function Map({ onClick }: Props) {
   };
 
   return (
-    <div
-      ref={ref}
-      style={{
-        flex: "0 1 auto",
-      }}
-    >
+    <div ref={ref} style={{ flex: "0 1 auto" }}>
       <LoadScript
         googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
       >
