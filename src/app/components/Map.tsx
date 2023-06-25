@@ -6,8 +6,7 @@ import {
   Polygon as PolygonElement,
   Marker,
 } from "@react-google-maps/api";
-import { Ref, use, useEffect, useRef, useState } from "react";
-import useSWR from "swr";
+import { Ref, useEffect, useRef, useState } from "react";
 
 import { Location, WarningArea } from "../../types";
 import { isPointInPolygon } from "../coordinates";
@@ -17,24 +16,16 @@ const initialCentre: Location = {
   lng: 121.16933982832528,
 };
 
-const fetcher = (url: string) => fetch(url).then(res => res.json());
-
 interface Props {
   onClick?: (polygon: WarningArea, location: Location) => void;
+  warningAreas: WarningArea[],
 }
 
-export default function Map({ onClick }: Props) {
-  const { data, error } = useSWR<WarningArea[]>("/api/warnings", fetcher);
-  const warningAreas = data || [];
+export default function Map({ onClick, warningAreas }: Props) {
   const { width, height, ref } = useParentDimensions();
   const [currentLocation, setCurrentLocation] = useState<
     Location | undefined
   >();
-
-  if (error) {
-    console.error(error);
-  }
-
   const polygons = warningAreas.map((poly, i) => {
     const options = polygonOptions(poly);
     return <PolygonElement path={poly.vertices} options={options} key={i} />;
