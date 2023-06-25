@@ -8,6 +8,7 @@ import { Input, UserInfo } from "./prompts";
 import { Advice } from "./gpt";
 import { WarningArea } from "../types";
 import Map from "./components/Map";
+import Modal from "./components/Modal";
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -25,21 +26,14 @@ const initialUserInfo: UserInfo = {
 
 export default function Home() {
   const [userInfo, setUserInfo] = useState<UserInfo>(initialUserInfo);
-  const [sendingPrompt, setSendingPrompt] = useState(false);
   const { data } = useSWR<WarningArea[]>("/api/warnings", fetcher);
   const warningAreas = data || [];
+  const [advice, setAdvice] = useState<Advice>();
 
   const onClick = (warningArea: WarningArea) => {
-    console.log("On Click", { sendingPrompt });
-
-    setSendingPrompt(true);
-
-    postRequest(warningArea, userInfo)
-      .then(advice => {
-        console.log(advice);
-        postNotification(advice);
-      })
-      .finally(() => setSendingPrompt(false));
+    postRequest(warningArea, userInfo).then(advice =>
+      postNotification(advice, () => setAdvice(advice))
+    );
   };
 
   return (
@@ -52,6 +46,9 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <Map onClick={onClick} warningAreas={warningAreas} />
+        {advice && (
+          <Modal advice={advice} onClose={() => setAdvice(undefined)} />
+        )}
       </main>
     </>
   );
@@ -82,7 +79,10 @@ async function postRequest(
   return await response.json();
 }
 
-async function postNotification(advice: Advice): Promise<void> {
+async function postNotification(
+  advice: Advice,
+  onClick: () => void
+): Promise<void> {
   if (Notification.permission != "granted") {
     const result = await Notification.requestPermission();
     if (result == "denied") {
@@ -94,9 +94,14 @@ async function postNotification(advice: Advice): Promise<void> {
     body: advice.ShortDescription,
     icon: iconLink(advice.IncidentType),
   });
-  n.addEventListener("click", () => console.log("Clicked!"));
+  n.addEventListener("click", () => {
+    console.log("Clicked!");
+    onClick();
+    n.close();
+  });
   n.addEventListener("error", e => console.log("Error", e));
   n.addEventListener("show", e => console.log("Show", e));
+  n.addEventListener("close", e => console.log("Close", e));
 }
 
 function iconLink(text: string): string | undefined {

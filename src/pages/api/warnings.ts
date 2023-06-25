@@ -6,7 +6,10 @@ import { MessageArea } from "../messageArea";
 import { mercatorToLatLong } from "../coordinates";
 import { NextApiRequest } from "next";
 
-export default async function handle(req: NextApiRequest, res: any): Promise<void> {
+export default async function handle(
+  req: NextApiRequest,
+  res: any
+): Promise<void> {
   const messageAreas = await loadFixtures();
   const warningAreas = messageAreas.flatMap(msg => toWarningArea(msg));
   res.status(200).json(warningAreas);

@@ -18,7 +18,7 @@ const initialCentre: Location = {
 
 interface Props {
   onClick?: (polygon: WarningArea, location: Location) => void;
-  warningAreas: WarningArea[],
+  warningAreas: WarningArea[];
 }
 
 export default function Map({ onClick, warningAreas }: Props) {
