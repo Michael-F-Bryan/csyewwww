@@ -140,6 +140,7 @@ a {
   justify-content: space-between;
   align-items: center;
   padding: 6rem;
+  padding-top: 3rem;
   min-height: 100vh;
 }
 
@@ -373,4 +374,8 @@ div.buttons {
 div.buttons button {
   padding: 2em;
   margin: 1em;
+}
+
+label {
+  padding: 1em;
 }

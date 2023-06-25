@@ -7,6 +7,7 @@ import { Advice } from "../gpt";
 import { WarningArea } from "../types";
 import Map from "../components/Map";
 import Modal from "../components/Modal";
+import Settings from "@/components/Settings";
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -28,6 +29,8 @@ export default function Home() {
   const warningAreas = data || [];
   const [advice, setAdvice] = useState<Advice & { cadNumber: number }>();
   const [querying, setQuerying] = useState(false);
+
+  console.log(userInfo);
 
   const onClick = (warningArea: WarningArea) => {
     if (querying) {
@@ -55,6 +58,7 @@ export default function Home() {
         className="main"
         style={{ background: querying ? "lightslategrey" : undefined }}
       >
+        <Settings info={userInfo} infoChanged={setUserInfo} />
         <Map onClick={onClick} warningAreas={warningAreas} />
         {advice && (
           <Modal advice={advice} onClose={() => setAdvice(undefined)} />

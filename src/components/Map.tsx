@@ -106,5 +106,6 @@ function useParentDimensions(): {
     observer.observe(parent);
   }, [ref]);
 
-  return { ref, width, height };
+  // return { ref, width, height };
+  return { height: "700px", width: "1536px", ref }
 }
