@@ -363,3 +363,14 @@ a {
     transform: rotate(0deg);
   }
 }
+
+div.buttons {
+  padding: 1em;
+  display: flex;
+  justify-content: center;
+}
+
+div.buttons button {
+  padding: 2em;
+  margin: 1em;
+}

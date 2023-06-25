@@ -35,7 +35,11 @@ export default function Home() {
     }
     setQuerying(true);
     postRequest(warningArea, userInfo)
-      .then(advice => postNotification(advice, () => setAdvice({ ...advice, cadNumber: warningArea.cadNumber })))
+      .then(advice =>
+        postNotification(advice, () =>
+          setAdvice({ ...advice, cadNumber: warningArea.cadNumber })
+        )
+      )
       .finally(() => setQuerying(false));
   };
 

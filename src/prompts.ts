@@ -124,7 +124,7 @@ export async function findDir(
     }
   }
 
-  throw new Error(`Couldn't find {needle} in {initialDir}`);
+  throw new Error(`Couldn't find ${needle} in ${initialDir}`);
 }
 
 async function findMessageDetail(cadNumber: number): Promise<string> {
