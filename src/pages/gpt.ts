@@ -1,5 +1,5 @@
 import { Configuration, OpenAIApi } from "openai";
-import { Input, generatePromptMessages } from "@/app/prompts";
+import { Input, generatePromptMessages } from "./prompts";
 
 const temperature = 0.7;
 const maxTokens = 1144;
@@ -27,7 +27,7 @@ export async function query(input: Partial<Input>): Promise<Advice> {
     throw new Error("No choices found");
   }
 
-  return JSON.parse(choice);
+  return JSON.parse(choice.replace("```json", "").replace("```", ""));
 }
 
 export type Advice = {

@@ -8,7 +8,7 @@ import {
 } from "@react-google-maps/api";
 import { Ref, useEffect, useRef, useState } from "react";
 
-import { Location, WarningArea } from "../../types";
+import { Location, WarningArea } from "@/types";
 import { isPointInPolygon } from "../coordinates";
 
 const initialCentre: Location = {

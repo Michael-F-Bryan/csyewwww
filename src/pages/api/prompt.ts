@@ -1,6 +1,6 @@
-import { Input, generatePromptMessages } from "@/app/prompts";
+import { Input, generatePromptMessages } from "../prompts";
 
-export async function POST(req: Request): Promise<Response> {
+export default async function handle(req: Request): Promise<Response> {
   const input: Partial<Input> = await req.json();
   const messages = await generatePromptMessages(input);
   return new Response(JSON.stringify(messages));
