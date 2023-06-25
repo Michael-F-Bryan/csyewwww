@@ -7,7 +7,8 @@ import {
   Marker,
 } from "@react-google-maps/api";
 import { Ref, useEffect, useRef, useState } from "react";
-import { Location, WarningArea } from "../../types";
+
+import { Location, WarningArea } from "@/types";
 import { isPointInPolygon } from "../coordinates";
 
 const initialCentre: Location = {
@@ -17,13 +18,14 @@ const initialCentre: Location = {
 
 interface Props {
   onClick?: (polygon: WarningArea, location: Location) => void;
+  warningAreas: WarningArea[],
 }
 
-export default function Map({ onClick }: Props) {
-  const warningAreas = useWarningAreas();
+export default function Map({ onClick, warningAreas }: Props) {
   const { width, height, ref } = useParentDimensions();
-  const [currentLocation, setCurrentLocation] = useState<Location | undefined>();
-
+  const [currentLocation, setCurrentLocation] = useState<
+    Location | undefined
+  >();
   const polygons = warningAreas.map((poly, i) => {
     const options = polygonOptions(poly);
     return <PolygonElement path={poly.vertices} options={options} key={i} />;
@@ -35,7 +37,6 @@ export default function Map({ onClick }: Props) {
       return;
     }
 
-    console.log("Set Location", location);
     setCurrentLocation(location);
 
     warningAreas
@@ -44,12 +45,7 @@ export default function Map({ onClick }: Props) {
   };
 
   return (
-    <div
-      ref={ref}
-      style={{
-        flex: "0 1 auto",
-      }}
-    >
+    <div ref={ref} style={{ flex: "0 1 auto" }}>
       <LoadScript
         googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
       >
@@ -62,7 +58,6 @@ export default function Map({ onClick }: Props) {
           <>
             {...polygons}
             {currentLocation && <Marker position={currentLocation} />}
-
           </>
         </GoogleMap>
       </LoadScript>
@@ -86,27 +81,6 @@ function polygonOptions(_: WarningArea) {
   return options;
 }
 
-function useWarningAreas(): WarningArea[] {
-  const [warningAreas, setWarningAreas] = useState<WarningArea[]>([]);
-
-  useEffect(() => {
-    fetch("/api/warnings")
-      .then(async response => {
-        if (!response.ok) {
-          const body = await response.text();
-          console.log("Error", body);
-          throw new Error(response.status + " " + response.statusText);
-        }
-
-        const warningAreas = await response.json();
-        setWarningAreas(warningAreas);
-      })
-      .catch(console.error);
-  }, []);
-
-  return warningAreas;
-}
-
 function useParentDimensions(): {
   width: string;
   height: string;
@@ -127,6 +101,7 @@ function useParentDimensions(): {
       setWidth(`${width}px`);
       const height = event[0].contentBoxSize[0].blockSize;
       setHeight(`${height}px`);
+      console.log("Updating dimensions", { width, height });
     });
     observer.observe(parent);
   }, [ref]);

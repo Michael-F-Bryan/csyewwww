@@ -75,15 +75,21 @@ function pj_phi2(ts: number, e: number): number {
   return Phi;
 }
 
-export function isPointInPolygon(point: Location, polygon: Location[]): boolean {
+export function isPointInPolygon(
+  point: Location,
+  polygon: Location[]
+): boolean {
   let isInside = false;
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-      let xi = polygon[i].lat, yi = polygon[i].lng;
-      let xj = polygon[j].lat, yj = polygon[j].lng;
+    let xi = polygon[i].lat,
+      yi = polygon[i].lng;
+    let xj = polygon[j].lat,
+      yj = polygon[j].lng;
 
-      let intersect = ((yi > point.lng) != (yj > point.lng))
-          && (point.lat < (xj - xi) * (point.lng - yi) / (yj - yi) + xi);
-      if (intersect) isInside = !isInside;
+    let intersect =
+      yi > point.lng != yj > point.lng &&
+      point.lat < ((xj - xi) * (point.lng - yi)) / (yj - yi) + xi;
+    if (intersect) isInside = !isInside;
   }
   return isInside;
 }
